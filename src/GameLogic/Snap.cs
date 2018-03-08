@@ -31,19 +31,19 @@ namespace CardGames.GameLogic
 
 		private bool _started = false;
 
-		/// <summary>
-		/// Create a new game of Snap!
-		/// </summary>
-		public Snap ()
-		{
-			_deck = new Deck ();
-		}
+        /// <summary>
+        /// Create a new game of Snap!
+        /// </summary>
+        public Snap() {
+            _deck = new Deck();
+            _gameTimer = SwinGame.CreateTimer();
+        }
 
-		/// <summary>
-		/// Gets the card on the top of the "flip" stack. This card will be face up.
-		/// </summary>
-		/// <value>The top card.</value>
-		public Card TopCard
+        /// <summary>
+        /// Gets the card on the top of the "flip" stack. This card will be face up.
+        /// </summary>
+        /// <value>The top card.</value>
+        public Card TopCard
 		{
 			get
 			{
@@ -81,21 +81,22 @@ namespace CardGames.GameLogic
 			get { return _started; }
 		}
 
-		/// <summary>
-		/// Start the Snap game playing!
-		/// </summary>
-		public void Start()
-		{
-			if ( ! IsStarted )			// only start if not already started!
-			{
-				_started = true;
-				_deck.Shuffle ();		// Return the cards and shuffle
+        /// <summary>
+        /// Start the Snap game playing!
+        /// </summary>
+        public void Start()
+        {
+            if ( ! IsStarted )      // only start …
+            {
+                _started = true;
+                _deck.Shuffle ();   // Return … 
 
-				FlipNextCard ();		// Flip the first card...
-			}
-		}
-			
-		public void FlipNextCard()
+                FlipNextCard();        // Flip …
+                _gameTimer.Start();
+            }
+        }   
+
+        public void FlipNextCard()
 		{
 			if (_deck.CardsRemaining > 0)			// have cards...
 			{
@@ -105,45 +106,49 @@ namespace CardGames.GameLogic
 			}
 		}
 
-		/// <summary>
-		/// Update the game. This should be called in the Game loop to enable
-		/// the game to update its internal state.
-		/// </summary>
-		public void Update()
-		{
-			//TODO: implement update to automatically slip cards!
-		}
+        /// <summary>
+        /// Update the game. This should be called in the Game loop to enable
+        /// the game to update its internal state.
+        /// </summary>
+        public void Update() {
+            if (_gameTimer.Ticks > _flipTime)
+            {
+                _gameTimer.Reset();
+                FlipNextCard();
+            }
+        }
 
-		/// <summary>
-		/// Gets the player's score.
-		/// </summary>
-		/// <value>The score.</value>
-		public int Score(int idx)
-		{
-			if ( idx >= 0 && idx < _score.Length )
-				return _score[idx]; 
-			else
-				return 0;
-		}
+        /// <summary>
+        /// Gets the player's score.
+        /// </summary>
+        /// <value>The score.</value>
+        public int Score(int idx)
+		    {
+			    if ( idx >= 0 && idx < _score.Length )
+				    return _score[idx]; 
+			    else
+				    return 0;
+		    }
 
-		/// <summary>
-		/// The player hit the top of the cards "snap"! :)
-		/// Check if the top two cards' ranks match.
-		/// </summary>
-		public void PlayerHit (int player)
-		{
-			//TODO: consider deducting score for miss hits???
-			if ( player >= 0 && player < _score.Length &&  	// its a valid player
-				 IsStarted && 								// and the game is started
-				 _topCards [0] != null && _topCards [0].Rank == _topCards [1].Rank) // and its a match
-			{
-				_score[player]++;
-				//TODO: consider playing a sound here...
-			}
+		    /// <summary>
+		    /// The player hit the top of the cards "snap"! :)
+		    /// Check if the top two cards' ranks match.
+		    /// </summary>
+		    public void PlayerHit (int player)
+		    {
+			    //TODO: consider deducting score for miss hits???
+			    if ( player >= 0 && player < _score.Length &&  	// its a valid player
+				     IsStarted && 								// and the game is started
+				     _topCards [0] != null && _topCards [0].Rank == _topCards [1].Rank) // and its a match
+			    {
+				    _score[player]++;
+				    //TODO: consider playing a sound here...
+			    }
 
-			// stop the game...
-			_started = false;
-		}
+			    // stop the game...
+			    _started = false;
+                _gameTimer.Stop();
+        }
 	
 		#region Snap Game Unit Tests
 		#if DEBUG

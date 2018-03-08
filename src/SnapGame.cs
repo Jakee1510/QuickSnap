@@ -13,26 +13,25 @@ namespace CardGames
             SwinGame.BitmapSetCellDetails (cards, 82, 110, 13, 5, 53);      // set the cells in the bitmap to match the cards
         }
 
-		/// <summary>
-		/// Respond to the user input -- with requests affecting myGame
-		/// </summary>
-		/// <param name="myGame">The game object to update in response to events.</param>
-		private static void HandleUserInput(Snap myGame)
-		{
-			//Fetch the next batch of UI interaction
-			SwinGame.ProcessEvents();
+        /// <summary>
+        /// Respond to the user input -- with requests affecting myGame
+        /// </summary>
+        /// <param name="myGame">The game object to update in response to events.</param>
+        private static void HandleUserInput(Snap myGame)
+        {
+            //Fetch the next batch of UI interaction
+            SwinGame.ProcessEvents(); 
+            if (SwinGame.KeyTyped(KeyCode.vk_SPACE))
+            {
+                myGame.Start();
+            }
+        }
 
-			if (SwinGame.KeyTyped (KeyCode.vk_SPACE))
-			{
-				myGame.FlipNextCard ();
-			}
-		}
-
-		/// <summary>
-		/// Draws the game to the Window.
-		/// </summary>
-		/// <param name="myGame">The details of the game -- mostly top card and scores.</param>
-		private static void DrawGame(Snap myGame)
+        /// <summary>
+        /// Draws the game to the Window.
+        /// </summary>
+        /// <param name="myGame">The details of the game -- mostly top card and scores.</param>
+        private static void DrawGame(Snap myGame)
 		{
 			SwinGame.ClearScreen(Color.White);
 
